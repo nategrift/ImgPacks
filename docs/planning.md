@@ -54,6 +54,7 @@ Place to share AI generated content.
   - engine \*
   - prompt \*
   - location
+  - isUnlisted
 
 - packs
   - title \*
