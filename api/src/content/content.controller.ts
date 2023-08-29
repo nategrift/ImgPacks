@@ -1,5 +1,19 @@
-import { Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  FileTypeValidator,
+  Get,
+  MaxFileSizeValidator,
+  ParseFilePipe,
+  Patch,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ContentService } from './content.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ContentDto } from './content.dto';
 
 @Controller('content')
 export class ContentController {
@@ -16,8 +30,21 @@ export class ContentController {
   }
 
   @Post()
-  createContent(): string {
-    return this.contentService.createContent();
+  @UseInterceptors(FileInterceptor('file'))
+  async createContent(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5000000 }), // 5mb
+          new FileTypeValidator({ fileType: 'image/jpeg' }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    @Body() body: ContentDto,
+  ) {
+    console.log(body);
+    return await this.contentService.createContent(file);
   }
 
   @Delete(':id')

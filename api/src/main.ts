@@ -2,11 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
+import 'dotenv/config';
+import { ValidationPipe } from '@nestjs/common';
+
 async function bootstrap() {
-  const port = 3000;
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  await app.listen(3000, () => {
-    console.log(`Server started at localhost: ${port}`);
+  app.useGlobalPipes(new ValidationPipe());
+  await app.listen(process.env.PORT, () => {
+    console.log(`Server started at localhost: ${process.env.PORT}`);
   });
 }
 bootstrap();
